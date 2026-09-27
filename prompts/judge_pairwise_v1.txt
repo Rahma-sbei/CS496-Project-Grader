@@ -1,0 +1,36 @@
+You are an expert evaluator of professional emails. You are given a BRIEF and
+two candidate emails, EMAIL A and EMAIL B, both written for that brief.
+Decide which email better follows the style guide below. You must pick one.
+
+STYLE GUIDE (12 rules)
+1. Structure: has a greeting, a clear body, and a sign-off with a name.
+2. Tone: professional register, no slang or internet shorthand, formality that
+   fits the recipient relationship in the brief.
+3. Content: no facts or commitments that are not in the brief, every key point
+   addressed, names and titles correct.
+4. Form: grammatical, concise (no padding or repeated ideas), readable
+   paragraphs.
+
+IMPORTANT
+- The order of the emails means nothing. Do not prefer an email because it
+  comes first or second.
+- Do not prefer an email because it is longer. Extra words that add no content
+  are padding and count against the email.
+
+Return ONLY a single JSON object matching exactly this schema:
+
+{
+  "reason": "one or two sentences naming the rule(s) that decided it",
+  "winner": "A"
+}
+
+BRIEF:
+<<BRIEF_JSON>>
+
+EMAIL A:
+<<EMAIL_A>>
+
+EMAIL B:
+<<EMAIL_B>>
+
+Return only the JSON object described above.

@@ -63,16 +63,27 @@ one severe failure can outweigh several minor ones.
 4. `reconciled_label` is the ground truth used later to score the LLM judge —
    never score the judge against a single labeler's raw output.
 
-## Notes on this golden set (50 items)
-- 15 scenarios ("briefs"), each rendered as 3–4 candidate emails: one clean
-  pass plus 2–3 with a deliberately injected violation (`violation_injected`
-  field: `none`, `tone`, `structure`, `content`, or `form`).
-- 35 items in `dev` (used to iterate the system/judge prompts), 15 in `test`
-  (touched only once, for the final report).
-- 10 items (20%) carry a genuine labeler disagreement on one sub-field, with
-  a `resolution_note` explaining how it was reconciled — this is what your
-  inter-labeler agreement number should be computed from.
-- Note this is a **50-item pilot set** to develop the harness/guide against —
-  the project brief calls for 150+ in the final golden set, so scale this same
-  construction pattern (more scenarios × more injected variants) before the
-  Week 4 freeze.
+## How to label (tool)
+```
+python tools/label.py label --labeler 1   # person 1, alone
+python tools/label.py label --labeler 2   # person 2, alone, never looks at person 1's file
+python tools/label.py merge               # settle disagreements together, writes golden_set.jsonl
+```
+Type the numbers of the rules that FAIL (Enter if all pass), then the 1-5
+score. Type `d` to drop a broken item (bad brief, email not about the brief,
+etc.) and give the reason; dropped items go to `data/dropped_items.jsonl`
+and are counted in the report. Do not look at `violation_injected` while
+labelling.
+
+## Notes on this golden set (150 items)
+- 40 scenarios ("briefs"). Briefs 001-015 have 3-4 emails each (50 items),
+  briefs 016-040 have 4 emails each (100 items): one clean email plus
+  emails with one injected violation (`violation_injected`: `none`, `tone`,
+  `structure`, `content`, or `form`).
+- The split is **by brief**, so no brief appears in both sets:
+  90 items in `dev` (briefs 001-025, used to improve prompts) and
+  60 items in `test` (briefs 026-040, used once for the final report).
+- New items wait in `data/new_items.jsonl` until two people have labelled
+  them; `merge` moves them into `golden_set.jsonl`.
+- Inter-labeller agreement is computed with
+  `python -m harness.runner label-agreement` (per-rule % and Cohen's kappa).

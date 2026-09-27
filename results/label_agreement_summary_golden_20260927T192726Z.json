@@ -1,0 +1,95 @@
+{
+  "n_items": 50,
+  "per_rule_agreement": {
+    "structure.greeting": {
+      "count": 50,
+      "n": 50,
+      "pct": 100.0,
+      "kappa": 1.0
+    },
+    "structure.body": {
+      "count": 50,
+      "n": 50,
+      "pct": 100.0,
+      "kappa": 1.0
+    },
+    "structure.sign_off": {
+      "count": 50,
+      "n": 50,
+      "pct": 100.0,
+      "kappa": 1.0
+    },
+    "tone.professional_register": {
+      "count": 50,
+      "n": 50,
+      "pct": 100.0,
+      "kappa": 1.0
+    },
+    "tone.no_slang": {
+      "count": 50,
+      "n": 50,
+      "pct": 100.0,
+      "kappa": 1.0
+    },
+    "tone.formality_matches_relationship": {
+      "count": 50,
+      "n": 50,
+      "pct": 100.0,
+      "kappa": 1.0
+    },
+    "content.no_invented_facts": {
+      "count": 50,
+      "n": 50,
+      "pct": 100.0,
+      "kappa": 1.0
+    },
+    "content.addresses_all_points": {
+      "count": 50,
+      "n": 50,
+      "pct": 100.0,
+      "kappa": 1.0
+    },
+    "content.correct_names": {
+      "count": 48,
+      "n": 50,
+      "pct": 96.0,
+      "kappa": 0.0
+    },
+    "form.grammatical": {
+      "count": 50,
+      "n": 50,
+      "pct": 100.0,
+      "kappa": 1.0
+    },
+    "form.concise": {
+      "count": 49,
+      "n": 50,
+      "pct": 98.0,
+      "kappa": 0.912
+    },
+    "form.well_paragraphed": {
+      "count": 43,
+      "n": 50,
+      "pct": 86.0,
+      "kappa": 0.194
+    }
+  },
+  "all_12_rules_agree": {
+    "count": 40,
+    "n": 50,
+    "pct": 80.0
+  },
+  "overall_score_exact": {
+    "count": 40,
+    "n": 50,
+    "pct": 80.0,
+    "kappa": 0.691
+  },
+  "overall_score_within_1": {
+    "count": 50,
+    "n": 50,
+    "pct": 100.0
+  },
+  "n_dropped": 0,
+  "dropped_reasons": []
+}

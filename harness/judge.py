@@ -6,19 +6,17 @@ Also implements the two bias probes the slides require in the judge's
 reliability report ("What to measure" -> Judge):
   - verbosity_bias_check: pad a candidate email with content-free filler
     and see if the score goes up without the content improving.
-  - order_bias_check: this task grades ONE email against a rubric — it is
-    not a pairwise "pick the better answer" comparison, so there is no
-    literal "swap answer order" to test. As the closest faithful analogue,
-    we swap the order the BRIEF and CANDIDATE EMAIL blocks appear in the
-    prompt and check whether the verdict changes. Document this adaptation
-    in your report — it is not a drop-in substitute for true position bias,
-    which only applies to comparison-style judges.
+  - position_bias_check: the slides' "swap the order of two answers" test.
+    A second, pairwise judge (prompts/judge_pairwise_v1.txt) is shown two
+    emails for the SAME brief and must pick the better one. We ask twice,
+    A/B then B/A. A consistent judge picks the same email both times; if the
+    verdict flips, the judge followed the position, not the content.
 """
 import json
 from pathlib import Path
 
 from harness.llm_client import call_json
-from harness.schema import validate_judge_verdict, RULE_FIELDS, ALL_RULE_PATHS
+from harness.schema import validate_judge_verdict, validate_pairwise_verdict, RULE_FIELDS, ALL_RULE_PATHS
 
 ROOT = Path(__file__).resolve().parent.parent
 PROMPTS_DIR = ROOT / "prompts"
@@ -38,33 +36,17 @@ def load_judge_prompt(version: str) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def _fill_prompt(template: str, brief: dict, email: str, swap_order: bool = False) -> str:
+def _fill_prompt(template: str, brief: dict, email: str) -> str:
     brief_json = json.dumps(brief, ensure_ascii=False, indent=2)
-    if not swap_order:
-        filled = template.replace("<<BRIEF_JSON>>", brief_json)
-        filled = filled.replace("<<EMAIL_TEXT>>", email)
-        return filled
-    # Order-bias probe: physically swap which block appears first in the
-    # rendered prompt by swapping the two placeholder markers' positions.
-    marker_brief = "\n\nBRIEF:\n" + brief_json
-    marker_email = "\n\nCANDIDATE EMAIL:\n" + email
-    filled = template.replace("\n\nBRIEF:\n<<BRIEF_JSON>>", "\x00BRIEF\x00")
-    filled = filled.replace("\n\nCANDIDATE EMAIL:\n<<EMAIL_TEXT>>", "\x00EMAIL\x00")
-    # Re-insert in reverse order of first appearance
-    filled = filled.replace("\x00BRIEF\x00\x00EMAIL\x00", marker_email + marker_brief, 1)
-    filled = filled.replace("\x00EMAIL\x00\x00BRIEF\x00", marker_brief + marker_email, 1)
-    # Fallback if markers weren't adjacent (template changed): just do the plain fill
-    if "\x00" in filled:
-        filled = template.replace("<<BRIEF_JSON>>", brief_json).replace("<<EMAIL_TEXT>>", email)
-    return filled
+    return template.replace("<<BRIEF_JSON>>", brief_json).replace("<<EMAIL_TEXT>>", email)
 
 
-def judge_email(brief: dict, email: str, prompt_version: str = "v1", swap_order: bool = False) -> dict:
+def judge_email(brief: dict, email: str, prompt_version: str = "v1") -> dict:
     """Runs the judge on one (brief, email) pair. Returns the verdict dict
     (with a "_meta" latency/usage key on success), or {"error": ...} if the
     call/parsing failed or the shape was invalid. Never raises."""
     template = load_judge_prompt(prompt_version)
-    filled = _fill_prompt(template, brief, email, swap_order=swap_order)
+    filled = _fill_prompt(template, brief, email)
     verdict = call_json(filled)
     if "error" in verdict:
         return verdict
@@ -118,26 +100,50 @@ def verbosity_bias_check(brief: dict, email: str, prompt_version: str = "v1") ->
     return {
         "original_score": original.get("overall_score"),
         "padded_score": padded.get("overall_score"),
+        "score_delta": padded.get("overall_score", 0) - original.get("overall_score", 0),
         "score_increased_from_padding": padded.get("overall_score", 0) > original.get("overall_score", 0),
+        "concise_flagged_on_padded": not padded["form"]["concise"],
         "original_verdict": {k: v for k, v in original.items() if k in RULE_FIELDS},
         "padded_verdict": {k: v for k, v in padded.items() if k in RULE_FIELDS},
+        "_meta": [original.get("_meta"), padded.get("_meta")],
     }
 
 
-def order_bias_check(brief: dict, email: str, prompt_version: str = "v1") -> dict:
-    """Judges the same (brief, email) pair with the BRIEF/EMAIL blocks in
-    normal order and then swapped, and reports whether the verdict changed.
-    See module docstring: this is an adaptation of "position bias" for a
-    single-answer (not pairwise) judge."""
-    normal = judge_email(brief, email, prompt_version, swap_order=False)
-    swapped = judge_email(brief, email, prompt_version, swap_order=True)
-    if "error" in normal or "error" in swapped:
-        return {"error": normal.get("error") or swapped.get("error")}
+def pairwise_judge(brief: dict, email_a: str, email_b: str, prompt_version: str = "v1") -> dict:
+    """Asks the pairwise judge which of two emails is better. Returns
+    {"winner": "A"|"B", "reason": ..., "_meta": ...} or {"error": ...}."""
+    template = (PROMPTS_DIR / f"judge_pairwise_{prompt_version}.txt").read_text(encoding="utf-8")
+    filled = (template.replace("<<BRIEF_JSON>>", json.dumps(brief, ensure_ascii=False, indent=2))
+                      .replace("<<EMAIL_A>>", email_a)
+                      .replace("<<EMAIL_B>>", email_b))
+    verdict = call_json(filled)
+    if "error" in verdict:
+        return verdict
+    try:
+        validate_pairwise_verdict(verdict)
+    except ValueError as e:
+        return {"error": str(e), "raw_output": verdict}
+    return verdict
+
+
+def position_bias_check(brief: dict, better: str, worse: str, prompt_version: str = "v1") -> dict:
+    """Shows the pair in both orders. `better` is the email the humans scored
+    higher. Reports whether the verdict flipped with the order, whether the
+    judge picked the first-shown email, and whether it agreed with the humans."""
+    first = pairwise_judge(brief, better, worse, prompt_version)   # better shown as A
+    second = pairwise_judge(brief, worse, better, prompt_version)  # better shown as B
+    if "error" in first or "error" in second:
+        return {"error": first.get("error") or second.get("error")}
+    picked_better_1 = first["winner"] == "A"
+    picked_better_2 = second["winner"] == "B"
     return {
-        "normal_score": normal.get("overall_score"),
-        "swapped_score": swapped.get("overall_score"),
-        "score_changed": normal.get("overall_score") != swapped.get("overall_score"),
-        "any_rule_changed": any(
-            normal[band][field] != swapped[band][field] for band, field in ALL_RULE_PATHS
-        ),
+        "order_1_winner": first["winner"],
+        "order_2_winner": second["winner"],
+        "verdict_flipped": picked_better_1 != picked_better_2,
+        "picked_first_both_times": first["winner"] == "A" and second["winner"] == "A",
+        "picked_second_both_times": first["winner"] == "B" and second["winner"] == "B",
+        "agrees_with_humans_both_orders": picked_better_1 and picked_better_2,
+        "reason_order_1": first.get("reason"),
+        "reason_order_2": second.get("reason"),
+        "_meta": [first.get("_meta"), second.get("_meta")],
     }

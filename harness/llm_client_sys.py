@@ -27,14 +27,14 @@ import os
 import time
 from openai import OpenAI
 
-from harness.llm_client import _extract_json, _PLACEHOLDER_KEY
+from harness.llm_client import _extract_json, _PLACEHOLDER_KEY, _rate_limit_wait, DAILY_LIMIT_MARKER
 
 # Deliberately a different default model family/size than llm_client.py's
 # GROQ_MODEL, so system and judge are never the same model unless someone
 # explicitly overrides both env vars to match.
 GROQ_MODEL_SYS = os.getenv("GROQ_MODEL_SYS", "openai/gpt-oss-20b")
 
-_api_key = os.getenv("GROQ_API_KEY", _PLACEHOLDER_KEY)
+_api_key = os.getenv("GROQ_API_KEY") or _PLACEHOLDER_KEY  # empty value would crash OpenAI() at import
 
 groq_client_sys = OpenAI(
     base_url="https://api.groq.com/openai/v1",
@@ -42,7 +42,7 @@ groq_client_sys = OpenAI(
 )
 
 
-def call_json_sys(system_prompt: str, model: str = None, retries: int = 1) -> dict:
+def call_json_sys(system_prompt: str, model: str = None, retries: int = 4) -> dict:
     """Same contract as llm_client.call_json: always returns a dict, either
     the parsed JSON object (+ "_meta" latency/usage) or {"error": ...}.
     Never raises. Uses GROQ_MODEL_SYS by default, not GROQ_MODEL."""
@@ -84,6 +84,9 @@ def call_json_sys(system_prompt: str, model: str = None, retries: int = 1) -> di
             return parsed
         except Exception as e:  # noqa: BLE001
             last_error = e
+            wait = _rate_limit_wait(e)
+            if wait is None:
+                return {"error": f"{DAILY_LIMIT_MARKER}: {type(e).__name__}: {e}"}
             if attempt < retries:
-                time.sleep(1)
+                time.sleep(wait)
     return {"error": f"{type(last_error).__name__}: {last_error}"}

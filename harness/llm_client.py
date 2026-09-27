@@ -28,7 +28,7 @@ load_dotenv()
 GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 _PLACEHOLDER_KEY = "your_groq_api_key_here"
 
-_api_key = os.getenv("GROQ_API_KEY", _PLACEHOLDER_KEY)
+_api_key = os.getenv("GROQ_API_KEY") or _PLACEHOLDER_KEY  # empty value would crash OpenAI() at import
 
 groq_client = OpenAI(
     base_url="https://api.groq.com/openai/v1",
@@ -58,7 +58,24 @@ def _extract_json(text: str) -> dict:
     return parsed
 
 
-def call_json(system_prompt: str, model: str = None, retries: int = 1) -> dict:
+DAILY_LIMIT_MARKER = "DAILY_LIMIT"
+
+
+def _rate_limit_wait(e: Exception):
+    """For a Groq 429: seconds to wait before retrying, or None to give up.
+    Per-minute limits clear in seconds, so we wait. The per-day limit (TPD/RPD)
+    takes hours, so retrying only burns time."""
+    msg = str(e)
+    if "429" not in msg and "RateLimit" not in type(e).__name__:
+        return 1
+    if "per day" in msg:
+        return None
+    m = re.search(r"try again in (?:(\d+)m)?([\d.]+)s", msg)
+    wait = (int(m.group(1) or 0) * 60 + float(m.group(2))) if m else 10
+    return min(wait + 1, 90)
+
+
+def call_json(system_prompt: str, model: str = None, retries: int = 4) -> dict:
     """Calls the LLM with a fully-filled prompt and returns parsed JSON.
 
     Always returns a dict. On success the dict is the model's JSON object
@@ -98,12 +115,16 @@ def call_json(system_prompt: str, model: str = None, retries: int = 1) -> dict:
             parsed["_meta"] = {
                 "latency_s": round(latency_s, 3),
                 "attempt": attempt + 1,
+                "model": model or GROQ_MODEL,
                 "prompt_tokens": getattr(usage, "prompt_tokens", None) if usage else None,
                 "completion_tokens": getattr(usage, "completion_tokens", None) if usage else None,
             }
             return parsed
         except Exception as e:  # noqa: BLE001 — anything (network, auth, JSON, shape) lands here
             last_error = e
+            wait = _rate_limit_wait(e)
+            if wait is None:
+                return {"error": f"{DAILY_LIMIT_MARKER}: {type(e).__name__}: {e}"}
             if attempt < retries:
-                time.sleep(1)
+                time.sleep(wait)
     return {"error": f"{type(last_error).__name__}: {last_error}"}

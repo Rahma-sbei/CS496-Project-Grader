@@ -33,6 +33,18 @@ def validate_judge_verdict(verdict: dict) -> None:
                 raise ValueError(f"'{band}.{field}' is not a boolean")
     if "overall_score" not in verdict or not isinstance(verdict["overall_score"], (int, float)):
         raise ValueError("Judge output missing numeric 'overall_score'")
+    if not isinstance(verdict.get("reason"), str) or not verdict["reason"].strip():
+        raise ValueError("Judge output missing non-empty 'reason' string")
+
+
+def validate_pairwise_verdict(verdict: dict) -> None:
+    """Raises ValueError if the pairwise judge's JSON doesn't match {"winner": "A"|"B", "reason": str}."""
+    if not isinstance(verdict, dict):
+        raise ValueError(f"Pairwise output is not a JSON object (got {type(verdict).__name__})")
+    if verdict.get("winner") not in ("A", "B"):
+        raise ValueError(f"Pairwise 'winner' must be \"A\" or \"B\", got {verdict.get('winner')!r}")
+    if not isinstance(verdict.get("reason"), str):
+        raise ValueError("Pairwise output missing 'reason' string")
 
 
 def validate_system_output(output: dict) -> None:
