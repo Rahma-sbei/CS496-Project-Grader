@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Project 1 — The Grader: Report</title>
+<style>
+  @page { size: A4; margin: 13mm 14mm 13mm 14mm; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; font-size: 8.9pt; line-height: 1.33; color: #1a1a1a; margin: 0; }
+  h1 { font-size: 15pt; margin: 0 0 1mm 0; }
+  .sub { color: #555; font-size: 8.6pt; margin-bottom: 2.5mm; }
+  h2 { font-size: 10.6pt; margin: 3.2mm 0 1.2mm 0; padding-bottom: 0.6mm; border-bottom: 1.2px solid #2b4c7e; color: #2b4c7e; }
+  h3 { font-size: 9.2pt; margin: 2mm 0 0.8mm 0; }
+  p { margin: 0 0 1.4mm 0; }
+  ul { margin: 0 0 1.4mm 0; padding-left: 4.5mm; }
+  li { margin: 0 0 0.4mm 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0.8mm 0 1.8mm 0; font-size: 8.2pt; }
+  th, td { border: 0.6px solid #b8c2d0; padding: 0.6mm 1.4mm; text-align: left; vertical-align: top; }
+  th { background: #e9eef6; font-weight: 600; }
+  td.n, th.n { text-align: right; white-space: nowrap; }
+  .two { display: flex; gap: 4mm; }
+  .two > div { flex: 1; min-width: 0; }
+  .note { background: #f6f7f9; border-left: 2.5px solid #2b4c7e; padding: 1mm 2mm; margin: 1mm 0 1.8mm 0; }
+  .warn { border-left-color: #b5651d; }
+  code { font-family: Consolas, monospace; font-size: 8pt; background: #f1f3f6; padding: 0 0.6mm; }
+  .team { font-style: italic; }
+  .pb { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<h1>Project 1 — The Grader</h1>
+<div class="sub">CS496 AI Engineering · Mediterranean Institute of Technology · Fall 2026<br>
+Team: Nadia Ben Njima, Ahmed Brini, Rahma Sbei, Mariem Lahmer · Repository state: 27 September 2026</div>
+
+<h2>1. The task, and why exact match is not enough</h2>
+<p><b>Task:</b> given a short <i>brief</i> (recipient, relationship, purpose, 3–6 key points, optional sender), write one professional email that follows a 12-rule style guide. The rules are in four bands: <b>structure</b> (greeting, body, sign-off), <b>tone</b> (professional register, no slang, formality matching the relationship), <b>content</b> (no invented facts, all key points addressed, correct names) and <b>form</b> (grammatical, concise, well paragraphed). Each email also gets an overall score from 1 to 5.</p>
+<p><b>Why exact match fails:</b> for any brief there are many correct emails with different wording, order and length. A string or keyword comparison cannot tell "the delay was caused by a vendor issue" from "one of our suppliers let us down". It also cannot judge whether the tone fits a client or a teammate. The task passes all five of the brief's tests: no single correct answer, rules that fit on two pages, a labelled set buildable in a week, one model call per item, and reuse in later projects. So quality has to be graded by a model, and that model has to be shown to agree with humans.</p>
+
+<h2>2. The golden set</h2>
+<p><b>Construction:</b> 15 realistic scenarios, each rendered as 3–4 candidate emails: one clean email, plus 2–3 with one deliberately injected violation. That gives <b>50 items</b>. Injected types: none 15, tone 10, content 10, structure 9, form 6. Split: <b>35 dev</b> (used to iterate prompts) and <b>15 test</b> (used once, for the final numbers). Stored as <code>data/golden_set.jsonl</code>. The rules and examples are in <code>data/labelling_guide.md</code>.</p>
+<p><b>Labelling:</b> two people labelled every item independently (12 booleans + 1–5 score). We measured agreement on the raw labels, then reconciled disagreements into one <code>reconciled_label</code> with a written <code>resolution_note</code>. The reconciled label is the ground truth for the judge. <b>0 items were dropped.</b> Size note: the brief asks for 150+ items; we kept a 50-item set as a team decision, and the postmortem records it as a gap.</p>
+<div class="two">
+<div>
+<table>
+<tr><th>Inter-labeller agreement (n=50, before reconciliation)</th><th class="n">Result</th></tr>
+<tr><td>All 600 rule labels</td><td class="n">590/600 (98.3%)</td></tr>
+<tr><td>Items with any disagreement</td><td class="n">10/50 (20%), all dev</td></tr>
+<tr><td>Overall score, exact / within 1</td><td class="n">40/50 (80%) / 50/50</td></tr>
+<tr><td>Overall score, Cohen's κ</td><td class="n">0.691</td></tr>
+</table>
+</div>
+<div>
+<table>
+<tr><th>Rules with any disagreement</th><th class="n">Agree</th><th class="n">κ</th></tr>
+<tr><td>form.well_paragraphed</td><td class="n">43/50 (86%)</td><td class="n">0.19</td></tr>
+<tr><td>content.correct_names</td><td class="n">48/50 (96%)</td><td class="n">0.00*</td></tr>
+<tr><td>form.concise</td><td class="n">49/50 (98%)</td><td class="n">0.91</td></tr>
+<tr><td>other 9 rules</td><td class="n">50/50 (100%)</td><td class="n">1.00 / n/a*</td></tr>
+</table>
+</div>
+</div>
+<p style="font-size:8pt;color:#444">* κ is undefined (n/a) or close to 0 when nearly every label has the same value, so percent agreement is the headline number. Computed by <code>python -m harness.runner label-agreement</code>. In all 10 disagreements the reconciled score took the <b>lower</b> of the two scores, so the human standard leans strict.</p>
+
+<h2>3. The harness</h2>
+<ul>
+<li><b>One command per mode</b> (<code>harness/runner.py</code>): <code>label-agreement</code>, <code>validate-judge</code> (judge vs reconciled labels), <code>check-judge-bias</code>, <code>run-system</code> (system writes, judge grades). The <code>--split dev|test</code> and <code>--limit</code> options apply to every mode; <code>--start</code> resumes a stopped bias check.</li>
+<li><b>One row per item</b> in <code>results/*.jsonl</code>: input, output, judge verdict (12 booleans, score, reason), deterministic <code>rule_checks</code>, and <code>_meta</code> (model id, latency, tokens). Each run also writes a summary JSON with counts and rates: per-rule pass rate or agreement, score distribution, a per-brief-tag breakdown, latency and tokens.</li>
+<li><b>Structured output:</b> both models run in JSON mode, and both outputs are validated against fixed schemas (<code>schema.py</code>). A malformed or non-object response becomes a recorded error row, never a crash or a silent pass. Every item has its own error guard, and partial results are written on Ctrl-C.</li>
+<li><b>Two clients, two model families:</b> the judge (<code>llm_client.py</code>) runs <code>openai/gpt-oss-120b</code> and the system (<code>llm_client_sys.py</code>) runs <code>qwen/qwen3.8-27b</code>, as explained in §5.</li>
+<li><b>System briefs</b> (<code>data/briefs.jsonl</code>): 30 distinct briefs, none shared with the golden set, split 20 dev / 10 test. Each brief is tagged with what it tests: exact numbers (14), many key points (12), "do not…" constraints (7), sender given (6), unknown recipient name (3), plus tone cases. The tags are never shown to either model.</li>
+<li><b>Prompts under git:</b> <code>prompts/judge_prompt_v1..v3.txt</code>, <code>system_prompt_v1..v2.txt</code>. <code>prompts/CHANGELOG.md</code> links every change to its before/after score.</li>
+</ul>
+
+<h2>4. The judge — reliability report</h2>
+<h3>4.1 Prompt versions and agreement with humans</h3>
+<table>
+<tr><th>Version</th><th>Change (targeted at inspected mismatches)</th><th class="n">n / split</th><th class="n">Score exact</th><th class="n">Within 1</th><th>Weakest rules</th></tr>
+<tr><td>v1</td><td>Rules copied from the labelling guide; 12 booleans + score + reason</td><td class="n">50 / all</td><td class="n">42%</td><td class="n">76%</td><td>formality 0.72, grammatical 0.72</td></tr>
+<tr><td>v2</td><td>correct_names fails only on a <i>wrong</i> name; grammar excludes casual register; explicit relationship→formality mapping; "score rules independently"; padding examples</td><td class="n">35 / dev</td><td class="n">31.4%</td><td class="n">74.3%</td><td>greeting, sign_off, formality, key points 0.74</td></tr>
+<tr><td><b>v3</b></td><td>Score bands tied to specific rule failures; greeting/sign-off "false only if missing"; harsh tone moved to formality; implied key points count; concrete paragraph test</td><td class="n">35 / dev</td><td class="n"><b>34.3%</b></td><td class="n"><b>94.3%</b></td><td>addresses_all_points 0.77</td></tr>
+</table>
+<p>v3 per-rule agreement on dev: 11 of 12 rules at 83–100%, with <code>addresses_all_points</code> at 77%. Its root cause is confirmed on 6/6 mismatches: when an email states a key point <i>wrongly</i>, the judge marks the point missing, while humans count it as addressed and fail only no_invented_facts. The biggest single gain (within-1 from 74% to 94%) came from tying the score bands to rule failures. Exact score agreement stays low partly because the humans themselves agree exactly on only 80% of scores. <b>Decision: the judge is locked at v3 on gpt-oss-120b.</b> Any change to the prompt or the model reopens the lock. The final <code>validate-judge --split test</code> number on the 15 held-out items is <b>still to be run</b>.</p>
+
+<h3>4.2 Bias checks</h3>
+<p><b>Verbosity bias:</b> each email is graded as written, then again with four content-free filler sentences inserted before the sign-off. <b>Position bias:</b> our judge grades one email at a time, so there are no two answers to swap. The closest equivalent is to swap the order of the BRIEF and CANDIDATE EMAIL blocks in the prompt and check whether the verdict changes.</p>
+<table>
+<tr><th>Probe (judge v3, golden items 1–7)</th><th class="n">Score changed</th></tr>
+<tr><td>Padding raised the score (verbosity bias)</td><td class="n">0/7 (0%)</td></tr>
+<tr><td>Swapping BRIEF/EMAIL order changed the score (order bias)</td><td class="n">0/7 (0%)</td></tr>
+</table>
+<div class="note warn"><b>Limits of this result.</b> The run was planned for 20 items but stopped at 7 because of API rate limits. The first version of the check made 4 calls per item, and a validation job was running against the same model at the same time. The per-item scores were not saved; the file was rebuilt from the console output, and the unknown fields are <code>null</code>. We do not know whether padding <i>lowered</i> the score, which is the desired behaviour, or whether single rules flipped. There is no no-change noise baseline, and 2 of the 7 items are test items. The check now uses 3 calls per item, saves partial results and can resume (<code>--start 8 --limit 13</code>).</div>
+
+<h3>4.3 Where the judge fails (demo-day warnings)</h3>
+<ul>
+<li><b>Lenient on subtle additions.</b> It passed 8/8 emails with unfilled placeholders (<code>Dear [Client Name]</code>, <code>[Your Name]</code>) and invented commitments ("We have since resolved the issue", "we will notify you immediately"). The golden set only contains loud, injected violations, so its agreement numbers do not cover this. The deterministic placeholder check (<code>rule_checks.py</code>) now reports these misses separately.</li>
+<li><b>False "wrong name" failures.</b> It failed correct formal greetings ("Dear Ms. Ben Amor", "Dear Mr. Dridi") for "omitting the first name", and called "Hi Sarra" misspelled when it matched the brief exactly. These were 1/20 dev and 2/10 test items, and they are every sub-5 score in the final system runs.</li>
+<li><b>Rubric gap and noise.</b> v3's score bands give no band for a correct_names failure, so the same non-defect was scored 2 in one email and 4 in another. The identical greeting also went from 4 to 5 between two runs.</li>
+<li><b>Prompt injection.</b> The candidate email is placed inside the judge's system message, and the only defence is an instruction.</li>
+</ul>
+
+<h2>5. The system — same-model bias, prompt versions, results</h2>
+<h3>5.1 Same-model bias and how we fixed it</h3>
+<p>In the first version, <code>system.py</code> and <code>judge.py</code> shared one client, so <b>the judge was grading emails written by its own model</b> (gpt-oss-120b). The first run scored <b>5.0 on 50/50 items and 12/12 rules</b>. That is not credible, because the same judge scored human-written emails anywhere from 1 to 5. First fix: a separate system client pointed at <code>gpt-oss-20b</code>. It still scored 5.0 everywhere, because 20b and 120b are the <b>same family</b> (OpenAI gpt-oss: same training recipe and house style), and self-preference works at the family level. Final fix: the system moved to <b>qwen/qwen3.8-27b (Alibaba)</b>. Llama models are Enterprise-only on Groq, and Qwen is a preview model, which is a risk we note. We moved the system rather than the judge because the judge had already been validated and locked. An audit found that the model was not the only cause. The system briefs were the golden set's 15 scenarios repeated 3–4 times, so there were only about 15 distinct emails. The briefs were easy (3 points each) and overlapped with the judge's tuning data. We replaced them with the 30 distinct, harder briefs described in §3.</p>
+
+<h3>5.2 Score history</h3>
+<table>
+<tr><th>Run</th><th>System prompt / model</th><th>Briefs</th><th class="n">n</th><th class="n">Judge avg</th><th>Distribution</th><th>Status</th></tr>
+<tr><td>1</td><td>v1 / gpt-oss-120b (= judge model)</td><td>old, 15×3–4</td><td class="n">50</td><td class="n">5.00</td><td>5×50</td><td>self-preference; invalid</td></tr>
+<tr><td>2</td><td>v1 / gpt-oss-20b (same family)</td><td>old</td><td class="n">23</td><td class="n">5.00</td><td>5×23</td><td>partial; invalid</td></tr>
+<tr><td>3</td><td>v1 / qwen3.8-27b</td><td>old</td><td class="n">9</td><td class="n">5.00</td><td>5×9</td><td>smoke test, 3 distinct briefs</td></tr>
+<tr><td>4</td><td>v1 / qwen3.8-27b</td><td>new, dev</td><td class="n">20</td><td class="n">4.80</td><td>5×18, 4×1, 2×1</td><td><b>baseline</b></td></tr>
+<tr><td>5</td><td>v2 / qwen3.8-27b</td><td>new, dev</td><td class="n">20</td><td class="n">4.95</td><td>5×19, 4×1</td><td>accepted</td></tr>
+<tr><td>6</td><td>v2 / qwen3.8-27b</td><td>new, <b>test</b></td><td class="n">10</td><td class="n"><b>4.40</b></td><td>5×8, 2×2</td><td><b>final</b></td></tr>
+</table>
+
+<h3>5.3 System prompt v1 → v2</h3>
+<p><b>v1</b> restates the style guide, requires JSON <code>{subject, email}</code>, and says to "sign as a plausible sender name". On the new dev briefs it covered every key point, reproduced every number and respected all 5 "do not…" constraints. By manual review, <b>7/20 emails added content not in the brief</b> (promises such as "we will notify you immediately", reasons, "as promised"). For the 15 briefs without a sender it invented 7 different names and several job titles. <b>v2</b> is identical to v1 except for three sections: NO ADDITIONS (use only the brief; a greeting, a short thank-you or apology, and one generic line are allowed), RECIPIENT NAME (exact name, never placeholders, role-based greeting if the name is unknown) and SENDER (sign exactly as given, otherwise a first name only).</p>
+<table>
+<tr><th>Metric (dev n=20; criteria set before the run)</th><th class="n">v1</th><th class="n">v2 dev</th><th class="n">v2 test (n=10)</th></tr>
+<tr><td>Judge average score</td><td class="n">4.80</td><td class="n">4.95</td><td class="n">4.40</td></tr>
+<tr><td>Key points covered (judge) / tone rules passed (judge)</td><td class="n">20/20 / 20/20</td><td class="n">20/20 / 20/20</td><td class="n">10/10 / 10/10</td></tr>
+<tr><td><b>Emails with content not in the brief (manual review)</b></td><td class="n"><b>7/20</b></td><td class="n"><b>0/20</b></td><td class="n"><b>0/10</b></td></tr>
+<tr><td>No-sender emails signed with a first name only</td><td class="n">4/15</td><td class="n">15/15</td><td class="n">8/9</td></tr>
+<tr><td>Unfilled placeholders (rule check)</td><td class="n">0/20</td><td class="n">0/20</td><td class="n">0/10</td></tr>
+<tr><td>Sub-5 scores that are judge false positives (correct_names)</td><td class="n">2/2</td><td class="n">1/1</td><td class="n">2/2</td></tr>
+</table>
+<p><b>How to read this:</b> the judge's 4.80 → 4.95 on dev is <b>not</b> evidence of improvement. The only two scores that changed belong to emails with the <i>same</i> greeting in both runs (judge noise). The locked judge already scored v1's added content as 5. v2's real gains are in the rows the judge cannot see, which we measured by review and by rule checks: <b>additions 7 → 0</b> and <b>sender compliance 4/15 → 15/15</b>. On test, the two 2s are judge false positives, and the one real defect is a "Manager" signature. With the judge's own errors corrected, the test split would be 10/10 at 5. So the fixes generalised beyond the dev examples quoted in the prompt. v2 introduced side effects that the judge also misses: a generic "let me know if you have any questions" line in 16/20 emails, names copied too literally ("Dear Prof. Mourad Ellouze"), and emails 30% shorter. The manual counts come from our own review and are pending confirmation by the two labellers.</p>
+
+<h2>6. Cost model</h2>
+<p>Groq list prices (27 Sep 2026): qwen3.8-27b $0.80 input / $4.00 output per 1M tokens; gpt-oss-120b $0.15 / $0.60. Token counts are measured per item from the runs. <code>scorer.py</code> still has zero prices, so the dollar figures below are computed by hand.</p>
+<table>
+<tr><th>Per item (v2, test run)</th><th class="n">Tokens in / out</th><th class="n">Latency avg / max</th><th class="n">Cost per 1k items</th></tr>
+<tr><td>System (writes the email)</td><td class="n">703 / 130</td><td class="n">0.55 s / 1.6 s</td><td class="n">$1.08</td></tr>
+<tr><td>Judge (grades the email)</td><td class="n">922 / 605</td><td class="n">2.48 s / 7.9 s</td><td class="n">$0.50</td></tr>
+<tr><td><b>Total per 1,000 requests</b></td><td class="n"></td><td class="n"></td><td class="n"><b>$1.59</b></td></tr>
+<tr><td><b>At 100× volume (100,000 requests)</b></td><td class="n"></td><td class="n"></td><td class="n"><b>≈ $159</b></td></tr>
+</table>
+<p>Notes: v2's longer prompt adds about 267 input tokens per email, roughly +$0.21 per 1k. The judge costs about half as much as the system per item, even though its output is longer, because gpt-oss-120b is 5–7× cheaper per token. At 100× volume, the constraint is Groq's rate limits more than cost: two calls per request means spreading the load or moving to a higher tier. A judge validation run costs 35 calls on dev, and a full bias check costs 3 calls per item.</p>
+
+</body>
+</html>
