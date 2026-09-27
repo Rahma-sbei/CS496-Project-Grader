@@ -1,0 +1,140 @@
+{
+  "n_items": 10,
+  "n_errors": 0,
+  "n_scored": 10,
+  "average_overall_score": 4.4,
+  "pct_scored_4_or_5": 0.8,
+  "per_rule_pass_rate": {
+    "structure.greeting": 1.0,
+    "structure.body": 1.0,
+    "structure.sign_off": 1.0,
+    "tone.professional_register": 1.0,
+    "tone.no_slang": 1.0,
+    "tone.formality_matches_relationship": 1.0,
+    "content.no_invented_facts": 1.0,
+    "content.addresses_all_points": 1.0,
+    "content.correct_names": 0.8,
+    "form.grammatical": 1.0,
+    "form.concise": 1.0,
+    "form.well_paragraphed": 1.0
+  },
+  "score_distribution": {
+    "1": 0,
+    "2": 2,
+    "3": 0,
+    "4": 0,
+    "5": 8
+  },
+  "by_brief_tag": {
+    "apology": {
+      "n": 1,
+      "average_score": 5.0,
+      "n_below_5": 0
+    },
+    "bad_news_outward": {
+      "n": 1,
+      "average_score": 5.0,
+      "n_below_5": 0
+    },
+    "dates": {
+      "n": 2,
+      "average_score": 5.0,
+      "n_below_5": 0
+    },
+    "easy_control": {
+      "n": 2,
+      "average_score": 3.5,
+      "n_below_5": 1
+    },
+    "exact_number": {
+      "n": 4,
+      "average_score": 5.0,
+      "n_below_5": 0
+    },
+    "firm_not_aggressive": {
+      "n": 1,
+      "average_score": 5.0,
+      "n_below_5": 0
+    },
+    "manager_to_report": {
+      "n": 1,
+      "average_score": 5.0,
+      "n_below_5": 0
+    },
+    "many_key_points": {
+      "n": 4,
+      "average_score": 4.25,
+      "n_below_5": 1
+    },
+    "name_unknown_placeholder_trap": {
+      "n": 1,
+      "average_score": 5.0,
+      "n_below_5": 0
+    },
+    "names": {
+      "n": 3,
+      "average_score": 5.0,
+      "n_below_5": 0
+    },
+    "negative_constraint": {
+      "n": 2,
+      "average_score": 3.5,
+      "n_below_5": 1
+    },
+    "peer_formality": {
+      "n": 1,
+      "average_score": 2.0,
+      "n_below_5": 1
+    },
+    "refusal_tone": {
+      "n": 1,
+      "average_score": 5.0,
+      "n_below_5": 0
+    },
+    "sender_given": {
+      "n": 1,
+      "average_score": 5.0,
+      "n_below_5": 0
+    },
+    "sensitive_claims": {
+      "n": 1,
+      "average_score": 2.0,
+      "n_below_5": 1
+    }
+  },
+  "rule_checks": {
+    "n_checked": 10,
+    "n_with_placeholders": 0,
+    "pct_with_placeholders": 0.0,
+    "n_placeholder_but_judge_passed_correct_names": 0,
+    "placeholder_item_ids": [],
+    "judge_missed_placeholder_ids": []
+  },
+  "system_latency_and_cost": {
+    "n_with_meta": 10,
+    "models": [
+      "qwen/qwen3.8-27b"
+    ],
+    "avg_latency_s": 0.5534,
+    "max_latency_s": 1.597,
+    "total_prompt_tokens": 7028,
+    "total_completion_tokens": 1304,
+    "estimated_cost_usd": 0.0,
+    "estimated_cost_per_1k_items_usd": 0.0
+  },
+  "judge_latency_and_cost": {
+    "n_with_meta": 10,
+    "models": [
+      "openai/gpt-oss-120b"
+    ],
+    "avg_latency_s": 2.479,
+    "max_latency_s": 7.859,
+    "total_prompt_tokens": 9215,
+    "total_completion_tokens": 6051,
+    "estimated_cost_usd": 0.0,
+    "estimated_cost_per_1k_items_usd": 0.0
+  },
+  "system_version": "v2",
+  "judge_version": "v3",
+  "split": "test"
+}

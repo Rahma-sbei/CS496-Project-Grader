@@ -1,0 +1,36 @@
+{
+  "judge_version": "v3",
+  "golden_set_items": "1-7",
+  "item_ids": [
+    "item_001",
+    "item_002",
+    "item_003",
+    "item_004",
+    "item_005",
+    "item_006",
+    "item_007"
+  ],
+  "n_items": 7,
+  "n_verbosity_errors": 0,
+  "verbosity_bias_rate": 0.0,
+  "n_padding_increased_score": 0,
+  "n_padding_decreased_score": null,
+  "n_padding_changed_any_rule": null,
+  "n_order_errors": 0,
+  "order_bias_rate": 0.0,
+  "n_order_changed_score": 0,
+  "n_order_changed_any_rule": null,
+  "partial_run": true,
+  "planned_n_items": 20,
+  "source": "console_output",
+  "note": "Reconstructed from the console output of `check-judge-bias --judge-version v3` (4 calls/item version), stopped by the user after item 7 of 20 before the results file was written. Only the two booleans printed on the console are known; scores and per-rule verdicts were not printed, so they are null (not recorded), not false.",
+  "console_output": [
+    "[1/20] item_001: padding_increased_score=False order_changed_score=False",
+    "[2/20] item_002: padding_increased_score=False order_changed_score=False",
+    "[3/20] item_003: padding_increased_score=False order_changed_score=False",
+    "[4/20] item_004: padding_increased_score=False order_changed_score=False",
+    "[5/20] item_005: padding_increased_score=False order_changed_score=False",
+    "[6/20] item_006: padding_increased_score=False order_changed_score=False",
+    "[7/20] item_007: padding_increased_score=False order_changed_score=False"
+  ]
+}

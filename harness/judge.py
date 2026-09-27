@@ -105,12 +105,14 @@ def pad_email(email: str) -> str:
     return email.rstrip() + filler
 
 
-def verbosity_bias_check(brief: dict, email: str, prompt_version: str = "v1") -> dict:
+def verbosity_bias_check(brief: dict, email: str, prompt_version: str = "v1", original: dict = None) -> dict:
     """Judges the original email, then a padded version of the SAME email,
     and reports whether the score/verdict changed. A well-calibrated judge
     should NOT reward the padded version — the prompt explicitly says not
-    to reward length."""
-    original = judge_email(brief, email, prompt_version)
+    to reward length. Pass `original` (an existing normal-order verdict for
+    this pair) to reuse it instead of paying for the same call again."""
+    if original is None:
+        original = judge_email(brief, email, prompt_version)
     padded_text = pad_email(email)
     padded = judge_email(brief, padded_text, prompt_version)
     if "error" in original or "error" in padded:
@@ -124,12 +126,14 @@ def verbosity_bias_check(brief: dict, email: str, prompt_version: str = "v1") ->
     }
 
 
-def order_bias_check(brief: dict, email: str, prompt_version: str = "v1") -> dict:
+def order_bias_check(brief: dict, email: str, prompt_version: str = "v1", normal: dict = None) -> dict:
     """Judges the same (brief, email) pair with the BRIEF/EMAIL blocks in
     normal order and then swapped, and reports whether the verdict changed.
     See module docstring: this is an adaptation of "position bias" for a
-    single-answer (not pairwise) judge."""
-    normal = judge_email(brief, email, prompt_version, swap_order=False)
+    single-answer (not pairwise) judge. Pass `normal` to reuse an existing
+    normal-order verdict (the same call verbosity_bias_check makes)."""
+    if normal is None:
+        normal = judge_email(brief, email, prompt_version, swap_order=False)
     swapped = judge_email(brief, email, prompt_version, swap_order=True)
     if "error" in normal or "error" in swapped:
         return {"error": normal.get("error") or swapped.get("error")}

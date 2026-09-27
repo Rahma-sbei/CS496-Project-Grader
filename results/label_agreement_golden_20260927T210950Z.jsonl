@@ -1,0 +1,50 @@
+{"id": "item_001", "split": "dev", "disagreements": [], "labeler_1_score": 5, "labeler_2_score": 5, "reconciled_score": 5}
+{"id": "item_002", "split": "test", "disagreements": [], "labeler_1_score": 2, "labeler_2_score": 2, "reconciled_score": 2}
+{"id": "item_003", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_004", "split": "dev", "disagreements": ["form.well_paragraphed", "overall_score"], "labeler_1_score": 3, "labeler_2_score": 2, "reconciled_score": 2}
+{"id": "item_005", "split": "test", "disagreements": [], "labeler_1_score": 5, "labeler_2_score": 5, "reconciled_score": 5}
+{"id": "item_006", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_007", "split": "dev", "disagreements": [], "labeler_1_score": 4, "labeler_2_score": 4, "reconciled_score": 4}
+{"id": "item_008", "split": "test", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_009", "split": "dev", "disagreements": ["form.well_paragraphed", "overall_score"], "labeler_1_score": 5, "labeler_2_score": 4, "reconciled_score": 4}
+{"id": "item_010", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_011", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_012", "split": "test", "disagreements": [], "labeler_1_score": 5, "labeler_2_score": 5, "reconciled_score": 5}
+{"id": "item_013", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_014", "split": "dev", "disagreements": ["content.correct_names", "overall_score"], "labeler_1_score": 3, "labeler_2_score": 2, "reconciled_score": 2}
+{"id": "item_015", "split": "test", "disagreements": [], "labeler_1_score": 5, "labeler_2_score": 5, "reconciled_score": 5}
+{"id": "item_016", "split": "dev", "disagreements": [], "labeler_1_score": 2, "labeler_2_score": 2, "reconciled_score": 2}
+{"id": "item_017", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_018", "split": "test", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_019", "split": "dev", "disagreements": ["form.well_paragraphed", "overall_score"], "labeler_1_score": 5, "labeler_2_score": 4, "reconciled_score": 4}
+{"id": "item_020", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_021", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_022", "split": "test", "disagreements": [], "labeler_1_score": 5, "labeler_2_score": 5, "reconciled_score": 5}
+{"id": "item_023", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_024", "split": "dev", "disagreements": ["form.well_paragraphed", "overall_score"], "labeler_1_score": 3, "labeler_2_score": 2, "reconciled_score": 2}
+{"id": "item_025", "split": "test", "disagreements": [], "labeler_1_score": 5, "labeler_2_score": 5, "reconciled_score": 5}
+{"id": "item_026", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_027", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_028", "split": "test", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_029", "split": "dev", "disagreements": ["form.well_paragraphed", "overall_score"], "labeler_1_score": 5, "labeler_2_score": 4, "reconciled_score": 4}
+{"id": "item_030", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_031", "split": "test", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_032", "split": "dev", "disagreements": [], "labeler_1_score": 5, "labeler_2_score": 5, "reconciled_score": 5}
+{"id": "item_033", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_034", "split": "dev", "disagreements": ["content.correct_names", "overall_score"], "labeler_1_score": 3, "labeler_2_score": 2, "reconciled_score": 2}
+{"id": "item_035", "split": "test", "disagreements": [], "labeler_1_score": 5, "labeler_2_score": 5, "reconciled_score": 5}
+{"id": "item_036", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_037", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_038", "split": "test", "disagreements": [], "labeler_1_score": 5, "labeler_2_score": 5, "reconciled_score": 5}
+{"id": "item_039", "split": "dev", "disagreements": ["form.well_paragraphed", "overall_score"], "labeler_1_score": 3, "labeler_2_score": 2, "reconciled_score": 2}
+{"id": "item_040", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_041", "split": "dev", "disagreements": [], "labeler_1_score": 5, "labeler_2_score": 5, "reconciled_score": 5}
+{"id": "item_042", "split": "test", "disagreements": [], "labeler_1_score": 2, "labeler_2_score": 2, "reconciled_score": 2}
+{"id": "item_043", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_044", "split": "dev", "disagreements": ["form.well_paragraphed", "overall_score"], "labeler_1_score": 5, "labeler_2_score": 4, "reconciled_score": 4}
+{"id": "item_045", "split": "test", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}
+{"id": "item_046", "split": "dev", "disagreements": [], "labeler_1_score": 4, "labeler_2_score": 4, "reconciled_score": 4}
+{"id": "item_047", "split": "dev", "disagreements": [], "labeler_1_score": 5, "labeler_2_score": 5, "reconciled_score": 5}
+{"id": "item_048", "split": "test", "disagreements": [], "labeler_1_score": 2, "labeler_2_score": 2, "reconciled_score": 2}
+{"id": "item_049", "split": "dev", "disagreements": ["form.concise", "overall_score"], "labeler_1_score": 3, "labeler_2_score": 2, "reconciled_score": 2}
+{"id": "item_050", "split": "dev", "disagreements": [], "labeler_1_score": 3, "labeler_2_score": 3, "reconciled_score": 3}

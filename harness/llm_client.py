@@ -98,6 +98,7 @@ def call_json(system_prompt: str, model: str = None, retries: int = 1) -> dict:
             parsed["_meta"] = {
                 "latency_s": round(latency_s, 3),
                 "attempt": attempt + 1,
+                "model": model or GROQ_MODEL,
                 "prompt_tokens": getattr(usage, "prompt_tokens", None) if usage else None,
                 "completion_tokens": getattr(usage, "completion_tokens", None) if usage else None,
             }

@@ -1,7 +1,7 @@
 {
-  "n_items": 50,
+  "n_items": 23,
   "n_errors": 0,
-  "n_scored": 50,
+  "n_scored": 23,
   "average_overall_score": 5.0,
   "pct_scored_4_or_5": 1.0,
   "per_rule_pass_rate": {
@@ -19,20 +19,20 @@
     "form.well_paragraphed": 1.0
   },
   "system_latency_and_cost": {
-    "n_with_meta": 50,
-    "avg_latency_s": 3.6716800000000003,
-    "max_latency_s": 7.616,
-    "total_prompt_tokens": 23160,
-    "total_completion_tokens": 17865,
+    "n_with_meta": 23,
+    "avg_latency_s": 0.7803043478260869,
+    "max_latency_s": 1.254,
+    "total_prompt_tokens": 10653,
+    "total_completion_tokens": 10296,
     "estimated_cost_usd": 0.0,
     "estimated_cost_per_1k_items_usd": 0.0
   },
   "judge_latency_and_cost": {
-    "n_with_meta": 50,
-    "avg_latency_s": 8.27244,
-    "max_latency_s": 11.6,
-    "total_prompt_tokens": 44002,
-    "total_completion_tokens": 23100,
+    "n_with_meta": 23,
+    "avg_latency_s": 4.044782608695653,
+    "max_latency_s": 10.503,
+    "total_prompt_tokens": 19768,
+    "total_completion_tokens": 10985,
     "estimated_cost_usd": 0.0,
     "estimated_cost_per_1k_items_usd": 0.0
   },

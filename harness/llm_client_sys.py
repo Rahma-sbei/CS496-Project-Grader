@@ -32,7 +32,7 @@ from harness.llm_client import _extract_json, _PLACEHOLDER_KEY
 # Deliberately a different default model family/size than llm_client.py's
 # GROQ_MODEL, so system and judge are never the same model unless someone
 # explicitly overrides both env vars to match.
-GROQ_MODEL_SYS = os.getenv("GROQ_MODEL_SYS", "openai/gpt-oss-20b")
+GROQ_MODEL_SYS = os.getenv("GROQ_MODEL_SYS", "qwen/qwen3.8-27b")
 
 _api_key = os.getenv("GROQ_API_KEY", _PLACEHOLDER_KEY)
 

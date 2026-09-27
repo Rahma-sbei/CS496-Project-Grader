@@ -1,0 +1,62 @@
+{
+  "n_items": 9,
+  "n_errors": 0,
+  "n_scored": 9,
+  "average_overall_score": 5.0,
+  "pct_scored_4_or_5": 1.0,
+  "per_rule_pass_rate": {
+    "structure.greeting": 1.0,
+    "structure.body": 1.0,
+    "structure.sign_off": 1.0,
+    "tone.professional_register": 1.0,
+    "tone.no_slang": 1.0,
+    "tone.formality_matches_relationship": 1.0,
+    "content.no_invented_facts": 1.0,
+    "content.addresses_all_points": 1.0,
+    "content.correct_names": 1.0,
+    "form.grammatical": 1.0,
+    "form.concise": 1.0,
+    "form.well_paragraphed": 1.0
+  },
+  "score_distribution": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 9
+  },
+  "rule_checks": {
+    "n_checked": 9,
+    "n_with_placeholders": 0,
+    "pct_with_placeholders": 0.0,
+    "n_placeholder_but_judge_passed_correct_names": 0,
+    "placeholder_item_ids": [],
+    "judge_missed_placeholder_ids": []
+  },
+  "system_latency_and_cost": {
+    "n_with_meta": 9,
+    "models": [
+      "qwen/qwen3.8-27b"
+    ],
+    "avg_latency_s": 0.5298888888888889,
+    "max_latency_s": 1.641,
+    "total_prompt_tokens": 3651,
+    "total_completion_tokens": 1172,
+    "estimated_cost_usd": 0.0,
+    "estimated_cost_per_1k_items_usd": 0.0
+  },
+  "judge_latency_and_cost": {
+    "n_with_meta": 9,
+    "models": [
+      "openai/gpt-oss-120b"
+    ],
+    "avg_latency_s": 1.4498888888888888,
+    "max_latency_s": 1.842,
+    "total_prompt_tokens": 8087,
+    "total_completion_tokens": 4071,
+    "estimated_cost_usd": 0.0,
+    "estimated_cost_per_1k_items_usd": 0.0
+  },
+  "system_version": "v1",
+  "judge_version": "v3"
+}

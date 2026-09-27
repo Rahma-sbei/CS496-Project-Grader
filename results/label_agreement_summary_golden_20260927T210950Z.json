@@ -1,0 +1,74 @@
+{
+  "n_items": 50,
+  "n_dropped": 0,
+  "dropped_reason": "none dropped: every item has both labels and a reconciled_label",
+  "all_rule_labels_agree": 590,
+  "all_rule_labels_total": 600,
+  "pct_all_rule_labels_agree": 0.9833333333333333,
+  "n_items_with_any_disagreement": 10,
+  "overall_score_exact": 40,
+  "overall_score_within_1": 50,
+  "overall_score_cohens_kappa": 0.691,
+  "per_rule": {
+    "structure.greeting": {
+      "agree": 50,
+      "pct_agreement": 1.0,
+      "cohens_kappa": 1.0
+    },
+    "structure.body": {
+      "agree": 50,
+      "pct_agreement": 1.0,
+      "cohens_kappa": null
+    },
+    "structure.sign_off": {
+      "agree": 50,
+      "pct_agreement": 1.0,
+      "cohens_kappa": 1.0
+    },
+    "tone.professional_register": {
+      "agree": 50,
+      "pct_agreement": 1.0,
+      "cohens_kappa": 1.0
+    },
+    "tone.no_slang": {
+      "agree": 50,
+      "pct_agreement": 1.0,
+      "cohens_kappa": 1.0
+    },
+    "tone.formality_matches_relationship": {
+      "agree": 50,
+      "pct_agreement": 1.0,
+      "cohens_kappa": 1.0
+    },
+    "content.no_invented_facts": {
+      "agree": 50,
+      "pct_agreement": 1.0,
+      "cohens_kappa": 1.0
+    },
+    "content.addresses_all_points": {
+      "agree": 50,
+      "pct_agreement": 1.0,
+      "cohens_kappa": 1.0
+    },
+    "content.correct_names": {
+      "agree": 48,
+      "pct_agreement": 0.96,
+      "cohens_kappa": 0.0
+    },
+    "form.grammatical": {
+      "agree": 50,
+      "pct_agreement": 1.0,
+      "cohens_kappa": null
+    },
+    "form.concise": {
+      "agree": 49,
+      "pct_agreement": 0.98,
+      "cohens_kappa": 0.912
+    },
+    "form.well_paragraphed": {
+      "agree": 43,
+      "pct_agreement": 0.86,
+      "cohens_kappa": 0.194
+    }
+  }
+}
