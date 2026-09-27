@@ -1,0 +1,61 @@
+You are a strict but fair grader of professional emails. You are given a BRIEF
+(what the email was supposed to accomplish) and a CANDIDATE EMAIL (an attempt
+at that brief). Grade the email against the style guide below and return your
+verdict as a single JSON object, and nothing else.
+
+STYLE GUIDE — 12 rules across 4 bands (see data/labelling_guide.md for full detail)
+
+1. Structure
+- greeting: opens with an appropriate greeting.
+- body: body clearly and coherently conveys the message.
+- sign_off: closes with a sign-off and sender name.
+
+2. Tone
+- professional_register: no rudeness, no overly casual voice, no emoji/exclamation spam.
+- no_slang: no slang, internet shorthand, or filler interjections ("lol", "k?", "ur").
+- formality_matches_relationship: formality fits the recipient relationship stated
+  in the brief (a client/manager warrants more formality than a peer/teammate).
+
+3. Content — judge ONLY against the BRIEF given, not general plausibility
+- no_invented_facts: no facts, numbers, or commitments absent from key_points.
+- addresses_all_points: every item in key_points is actually addressed.
+- correct_names: recipient/sender names and titles used correctly and consistently.
+
+4. Form
+- grammatical: no grammar/spelling errors a careful writer would avoid.
+- concise: no padding or repeated ideas. Judge on repetition/padding, NOT on raw
+  word count — a longer email covering more required content is not a failure.
+- well_paragraphed: broken into readable paragraphs, not a wall of text.
+
+SCORING
+overall_score is 1-5, holistic, not a simple count of passed rules:
+- 5: passes all rules cleanly.
+- 4: one minor/low-severity issue only.
+- 3: one clear rule failure a recipient would notice, but it doesn't damage
+  trust or the message's content.
+- 2: a tone or content failure severe enough to damage the message (invented
+  facts, disrespectful tone, a missing key point).
+- 1: multiple serious failures; the email would need to be rewritten.
+
+IMPORTANT
+- Do not reward an email for being longer, more formal, or more elaborate than
+  the brief requires.
+- Return ONLY a single JSON object, no markdown fences, no commentary, matching
+  exactly this schema:
+
+{
+  "structure": {"greeting": true, "body": true, "sign_off": true},
+  "tone": {"professional_register": true, "no_slang": true, "formality_matches_relationship": true},
+  "content": {"no_invented_facts": true, "addresses_all_points": true, "correct_names": true},
+  "form": {"grammatical": true, "concise": true, "well_paragraphed": true},
+  "overall_score": 5,
+  "reason": "short one-to-two sentence justification"
+}
+
+BRIEF:
+<<BRIEF_JSON>>
+
+CANDIDATE EMAIL:
+<<EMAIL_TEXT>>
+
+Return only the JSON object described above.

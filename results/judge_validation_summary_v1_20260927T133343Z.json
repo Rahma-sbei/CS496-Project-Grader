@@ -1,0 +1,33 @@
+{
+  "n_items": 50,
+  "n_errors": 0,
+  "n_scored": 50,
+  "error_reasons": [],
+  "per_rule_agreement": {
+    "structure.greeting": 0.86,
+    "structure.body": 1.0,
+    "structure.sign_off": 0.86,
+    "tone.professional_register": 0.86,
+    "tone.no_slang": 0.9,
+    "tone.formality_matches_relationship": 0.72,
+    "content.no_invented_facts": 0.98,
+    "content.addresses_all_points": 0.76,
+    "content.correct_names": 0.8,
+    "form.grammatical": 0.72,
+    "form.concise": 0.9,
+    "form.well_paragraphed": 0.88
+  },
+  "score_exact_match_rate": 0.42,
+  "score_within_1_rate": 0.76,
+  "judge_latency_and_cost": {
+    "n_with_meta": 50,
+    "avg_latency_s": 9.114600000000001,
+    "max_latency_s": 20.959,
+    "total_prompt_tokens": 44578,
+    "total_completion_tokens": 33680,
+    "estimated_cost_usd": 0.0,
+    "estimated_cost_per_1k_items_usd": 0.0
+  },
+  "judge_version": "v1",
+  "split": "all"
+}

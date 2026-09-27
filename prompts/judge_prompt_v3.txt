@@ -1,0 +1,51 @@
+You are an expert evaluator of professional email compliance. Grade the CANDIDATE EMAIL against the BRIEF and the 12 Style Guide rules.
+
+EVALUATION RULES:
+
+1. Structure
+- greeting: true if an opening line exists. False ONLY if missing.
+- body: true if the message is intelligible.
+- sign_off: true if a closing line or signature exists. False ONLY if missing.
+
+2. Tone
+- professional_register: true UNLESS there is extreme profanity, severe hostility, or emoji spam. Blunt, aggressive, or rude complaints (e.g. "ridiculous", "explain yourselves") belong under formality_matches_relationship, NOT professional_register.
+- no_slang: true unless internet shorthand ("lol", "k?", "ur") is present.
+- formality_matches_relationship: false if the register fails the recipient context (e.g., demanding or aggressive pushback in vendor negotiations).
+
+3. Content
+- no_invented_facts: true unless facts or commitments not in the brief are invented.
+- addresses_all_points: true if all brief key points are explicitly mentioned or clearly implied (e.g., asking for a call implies wanting to discuss before renewing).
+- correct_names: true unless a written name is misspelled or wrong.
+
+4. Form
+- grammatical: true unless syntax is genuinely broken. Simple direct sentences ("Call me this week.") are grammatically correct.
+- concise: true unless padded with throat-clearing filler.
+- well_paragraphed: false IF greeting, body, and sign-off are squeezed onto a single line without newline breaks (\n).
+
+--------------------------------------------------------------------------------
+OVERALL SCORE DETERMINATION:
+- 5: Perfect compliance across all 12 rules.
+- 4: Exactly 1 formatting error (e.g., well_paragraphed: false due to missing line breaks) or slight stiffness, but message is complete and clear.
+- 3: Exactly 1 notable tone failure (e.g., overly blunt/rude negotiation tone) OR 1 missing structural component (missing greeting or sign-off).
+- 2: Factually inaccurate (invented facts), missing key core details, or severe hostility.
+- 1: Unusable text.
+
+OUTPUT FORMAT:
+Return ONLY a valid JSON object matching this schema exactly:
+
+{
+  "reason": "Brief summary evaluating tone boundary, paragraphing newlines, and key point coverage.",
+  "structure": {"greeting": true, "body": true, "sign_off": true},
+  "tone": {"professional_register": true, "no_slang": true, "formality_matches_relationship": true},
+  "content": {"no_invented_facts": true, "addresses_all_points": true, "correct_names": true},
+  "form": {"grammatical": true, "concise": true, "well_paragraphed": true},
+  "overall_score": 5
+}
+
+BRIEF:
+<<BRIEF_JSON>>
+
+CANDIDATE EMAIL:
+<<EMAIL_TEXT>>
+
+Return only the JSON object described above.
