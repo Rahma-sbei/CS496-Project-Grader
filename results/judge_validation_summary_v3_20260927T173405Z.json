@@ -1,0 +1,33 @@
+{
+  "n_items": 35,
+  "n_errors": 0,
+  "n_scored": 35,
+  "error_reasons": [],
+  "per_rule_agreement": {
+    "structure.greeting": 0.9142857142857143,
+    "structure.body": 1.0,
+    "structure.sign_off": 0.8571428571428571,
+    "tone.professional_register": 0.9142857142857143,
+    "tone.no_slang": 0.8857142857142857,
+    "tone.formality_matches_relationship": 0.8285714285714286,
+    "content.no_invented_facts": 0.9714285714285714,
+    "content.addresses_all_points": 0.7714285714285715,
+    "content.correct_names": 0.9714285714285714,
+    "form.grammatical": 0.8857142857142857,
+    "form.concise": 0.9142857142857143,
+    "form.well_paragraphed": 0.8285714285714286
+  },
+  "score_exact_match_rate": 0.34285714285714286,
+  "score_within_1_rate": 0.9428571428571428,
+  "judge_latency_and_cost": {
+    "n_with_meta": 35,
+    "avg_latency_s": 8.432714285714285,
+    "max_latency_s": 16.075,
+    "total_prompt_tokens": 29623,
+    "total_completion_tokens": 27327,
+    "estimated_cost_usd": 0.0,
+    "estimated_cost_per_1k_items_usd": 0.0
+  },
+  "judge_version": "v3",
+  "split": "dev"
+}

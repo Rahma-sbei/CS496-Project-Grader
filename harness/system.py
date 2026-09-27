@@ -1,11 +1,15 @@
 """
 harness/system.py — the email-writing LLM. This is the system under test.
 Takes a brief, returns {"subject": ..., "email": ...}.
+
+Uses llm_client_sys (a separate client/model from the judge's llm_client) so
+the system is never graded by itself or a model in its own family — see
+llm_client_sys.py's docstring and CHANGELOG.md for why this split exists.
 """
 import json
 from pathlib import Path
 
-from harness.llm_client import call_json
+from harness.llm_client_sys import call_json_sys
 from harness.schema import validate_system_output
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -25,7 +29,7 @@ def write_email(brief: dict, prompt_version: str = "v1") -> dict:
     Never raises."""
     template = load_system_prompt(prompt_version)
     filled = template.replace("<<BRIEF_JSON>>", json.dumps(brief, ensure_ascii=False, indent=2))
-    output = call_json(filled)
+    output = call_json_sys(filled)
     if "error" in output:
         return output
     try:
