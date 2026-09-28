@@ -1,0 +1,26 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+
+# Results are generated artifacts, not source
+results/*.jsonl
+results/*.json
+!results/.gitkeep
+
+# Simulated/real human labels are per-environment, not source
+data/human_labels/human1.jsonl
+data/human_labels/human2.jsonl
+
+# OS
+.DS_Store

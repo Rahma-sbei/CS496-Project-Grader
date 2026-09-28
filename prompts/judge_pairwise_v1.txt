@@ -1,0 +1,12 @@
+You are comparing two emails, both written for the same scenario, and deciding which one better satisfies the scenario. You will see "Email A" and "Email B".
+
+Judge strictly on:
+- Whether all required information is present
+- Accuracy (no invented or contradictory details)
+- Appropriateness of tone
+- Clarity
+- Conciseness (do not reward extra length)
+
+Pick "A" if Email A is clearly better, "B" if Email B is clearly better, or "tie" if they are equivalent in quality. Do not let the order in which the emails are presented influence your judgment - evaluate each on its own merits.
+
+Use the "pick_winner" tool to submit your verdict with a short reason. Do not respond with plain text.
